@@ -17,7 +17,7 @@ public class Banco {
     }
 
     //login
-    public ContaBancaria fazerLogin(int mumeroConta , String cpf ) {
+    public ContaBancaria fazerLogin(int numeroConta , String cpf ) {
         for (ContaBancaria c : contas) {
             if (c.getNumeroConta() == numeroConta && c.getTitular().getCpf().equals(cpf)) {
                 return c;

@@ -105,16 +105,59 @@ public class SistemaBancario {
                     break;
 
                 case 3:
-                    System.out.println(" IMPLEMENTAR O  PIX");
+                    System.out.println("\n-----Tranferência PIX");
+                    System.out.println("Qual tipo de chave ?");
+                    System.out.println("1 - CPF");
+                    System.out.println("2 - Telefone");
+                    System.out.println("3 - Numero Conta");
+                    System.out.println("Opção: ");
+
+                    int tipoChave = scanner.nextInt();
+                    scanner.nextLine();
+
+                    ContaBancaria contaDestino = null;
+                    if (tipoChave == 1) {
+                        System.out.println("Digite o CPF: ");
+                        String cpfBusca = scanner.nextLine();
+                        contaDestino = banco.buscarContaPorCpf(cpfBusca);
+                    } else if (tipoChave == 2 ) {
+                        System.out.println("Digite o Telefone: ");
+                        Long telefoneBusca = scanner.nextLong();
+                        scanner.nextLine();
+                        contaDestino = banco.buscaContaPorTelefone(telefoneBusca);
+                    } else if (tipoChave == 3) {
+                        System.out.println("Digite o Numero Conta: ");
+                        int numeroContaBusca = scanner.nextInt();
+                        scanner.nextLine();
+                        contaDestino = banco.buscaContaPorNumero(numeroContaBusca);
+                    }else {
+                        System.out.println("Tipo invalido");
+                        break;
+                    }
+                    if (contaDestino == null) {
+                        System.out.println(" Nenhuma conta encontrada com essa chave PIX.");
+                    } else if (contaDestino.getNumeroConta() == contaAtiva.getNumeroConta()) {
+                        System.out.println("⚠️ Operação bloqueada: Você não pode fazer um PIX para a própria conta logada!");
+                    } else {
+                        // 3. Se passou pelas validações, executa a transferência
+                        System.out.println(" Destinatário encontrado: " + contaDestino.getTitular().getNome());
+                        System.out.print("Digite o valor do PIX: R$ ");
+                        BigDecimal valorPix = scanner.nextBigDecimal();
+
+                        // A mágica da Orientação a Objetos acontece aqui:
+                        contaAtiva.transferir(valorPix, contaDestino);
+                    }
+                    break;
+
                     // .
                     break;
 
                 case 4:
-                    System.out.println("🔒 Deslogando... Voltando à tela inicial.");
+                    System.out.println(" Deslogando... Voltando à tela inicial.");
                     break;
 
                 default:
-                    System.out.println("⚠️ Opção inválida.");
+                    System.out.println(" Opção inválida.");
                     break;
             }
         }
