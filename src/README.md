@@ -7,6 +7,8 @@ O objetivo principal deste repositório é registrar a minha evolução com a li
 - **Fase 1:** Sistema simples com terminal controlado por loops e listas dinâmicas (`ArrayList<String>`).
 - **Fase 2:** Evolução para Programação Orientada a Objetos (POO), encapsulamento de dados com a classe `Pessoa`.
 - **Fase 3:** Implementação de conceitos de composição de objetos e regras de negócios com a classe `ContaBancaria` (operações de Saque e Depósito).
+- **Fase 4:** Tranferencias entre contas.
+- **Fase 5:** Persistencia de dados.
 
 ## Tecnologias Utilizadas
 - Java 17+ (JDK)
