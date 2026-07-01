@@ -17,16 +17,15 @@ public class ContaBancaria {
         this.extrato.add("Contra Criada com sucesso");
     }
 
-    public ContaBancaria(Pessoa titular, int numeroConta, BigDecimal saldo, ArrayList<String> extrato) {
+    // NOVO CONSTRUTOR: Recebe apenas 3 parâmetros (Titular, Numero e Saldo)
+    public ContaBancaria(Pessoa titular, int numeroConta, BigDecimal saldo) {
         this.titular = titular;
         this.numeroConta = numeroConta;
         this.saldo = saldo;
-        this.extrato = extrato;
-        this.extrato.add("Conta Carregada do BD");
+        this.extrato = new ArrayList<>(); // O extrato nasce limpo aqui dentro!
+        this.extrato.add("Conta carregada do banco de dados com saldo de R$ " + saldo);
     }
 
-    public ContaBancaria(Pessoa titular, int numeroConta, BigDecimal saldo) {
-    }
 
     public void depositar(BigDecimal valor) {
         if (valor != null && valor.compareTo(BigDecimal.ZERO) > 0) {

@@ -83,7 +83,7 @@ public class SistemaBancario {
     }
 
     // ==========================================
-    // MENU 2: ÁREA PIX (LOGADO) - AGORA COM PERSISTÊNCIA REAL 
+    // MENU 2: ÁREA PIX (LOGADO) - AGORA COM PERSISTÊNCIA REAL
     // ==========================================
     private static void menuLogado(Scanner scanner, Banco banco, ContaBancaria contaAtiva) {
         int opcaoSecundaria = 0;
