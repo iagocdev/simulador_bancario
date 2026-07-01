@@ -83,17 +83,17 @@ public class SistemaBancario {
     }
 
     // ==========================================
-    // MENU 2: ÁREA PIX (LOGADO)
+    // MENU 2: ÁREA PIX (LOGADO) - AGORA COM PERSISTÊNCIA REAL 
     // ==========================================
     private static void menuLogado(Scanner scanner, Banco banco, ContaBancaria contaAtiva) {
         int opcaoSecundaria = 0;
 
-        while (opcaoSecundaria != 4) {
+        while (opcaoSecundaria != 5) {
             System.out.println("\n--- SUA CONTA | Saldo: R$ " + contaAtiva.getSaldo() + " ---");
             System.out.println("1 - Depositar");
             System.out.println("2 - Sacar");
-            System.out.println("3 - Transferir (PIX)");
-            System.out.println("4 - Extrato");
+            System.out.println("3 - Transferir (PIX/TED)");
+            System.out.println("4 - Ver Extrato");
             System.out.println("5 - Deslogar (Sair da Conta)");
             System.out.print("Escolha: ");
 
@@ -104,66 +104,77 @@ public class SistemaBancario {
                 case 1:
                     System.out.print("Valor do Depósito: R$ ");
                     contaAtiva.depositar(scanner.nextBigDecimal());
+                    banco.atualizarSaldo(contaAtiva); //  Sincroniza o depósito com o PostgreSQL
                     break;
 
                 case 2:
                     System.out.print("Valor do Saque: R$ ");
-                    contaAtiva.sacar(scanner.nextBigDecimal());
+                    boolean saqueSucesso = contaAtiva.sacar(scanner.nextBigDecimal());
+                    if (saqueSucesso) {
+                        banco.atualizarSaldo(contaAtiva); //  Só atualiza o BD se o saque deu certo
+                    }
                     break;
 
                 case 3:
-                    System.out.println("\n-----Tranferência PIX");
-                    System.out.println("Qual tipo de chave ?");
+                    System.out.println("\n----- Transferência PIX/TED -----");
+                    System.out.println("Qual tipo de chave?");
                     System.out.println("1 - CPF");
                     System.out.println("2 - Telefone");
-                    System.out.println("3 - Numero Conta");
-                    System.out.println("Opção: ");
+                    System.out.println("3 - Número Conta");
+                    System.out.print("Opção: ");
 
                     int tipoChave = scanner.nextInt();
                     scanner.nextLine();
 
                     ContaBancaria contaDestino = null;
                     if (tipoChave == 1) {
-                        System.out.println("Digite o CPF: ");
+                        System.out.print("Digite o CPF: ");
                         String cpfBusca = scanner.nextLine();
                         contaDestino = banco.buscarContaPorCpf(cpfBusca);
-                    } else if (tipoChave == 2 ) {
-                        System.out.println("Digite o Telefone: ");
-                        Long telefoneBusca = scanner.nextLong();
+                    } else if (tipoChave == 2) {
+                        System.out.print("Digite o Telefone: ");
+                        long telefoneBusca = scanner.nextLong();
                         scanner.nextLine();
-                        contaDestino = banco.buscaContaPorTelefone(telefoneBusca);
+                        contaDestino = banco.buscarContaPorTelefone(telefoneBusca);
                     } else if (tipoChave == 3) {
-                        System.out.println("Digite o Numero Conta: ");
-                        Long  numeroContaBusca = scanner.nextLong();
+                        System.out.print("Digite o Número da Conta: ");
+                        int numeroContaBusca = scanner.nextInt();
                         scanner.nextLine();
-                        contaDestino = banco.buscaContaPorNumero(numeroContaBusca);
-                    }else {
-                        System.out.println("Tipo invalido");
+                        contaDestino = banco.buscarContaPorNumero(numeroContaBusca);
+                    } else {
+                        System.out.println("Tipo inválido.");
                         break;
                     }
+
                     if (contaDestino == null) {
-                        System.out.println(" Nenhuma conta encontrada com essa chave PIX.");
+                        System.out.println(" Nenhuma conta encontrada com essa chave.");
                     } else if (contaDestino.getNumeroConta() == contaAtiva.getNumeroConta()) {
-                        System.out.println("⚠️ Operação bloqueada: Você não pode fazer um PIX para a própria conta logada!");
+                        System.out.println("Operação bloqueada: Você não pode transferir para si mesmo!");
                     } else {
-                        // 3. Se passou pelas validações, executa a transferência
                         System.out.println(" Destinatário encontrado: " + contaDestino.getTitular().getNome());
-                        System.out.print("Digite o valor do PIX: R$ ");
+                        System.out.print("Digite o valor da transferência: R$ ");
                         BigDecimal valorPix = scanner.nextBigDecimal();
 
+                        boolean pixSucesso = contaAtiva.transferir(valorPix, contaDestino);
 
-                        contaAtiva.transferir(valorPix, contaDestino);
+                        if (pixSucesso) {
+                            //  O PIX DEU CERTO! Atualiza o saldo
+                            banco.atualizarSaldo(contaAtiva);
+                            banco.atualizarSaldo(contaDestino);
+                        }
                     }
                     break;
+
                 case 4:
                     contaAtiva.exibirExtrato();
                     break;
+
                 case 5:
-                    System.out.println(" Deslogando... Voltando à tela inicial.");
+                    System.out.println("🔒 Deslogando... Voltando à tela inicial.");
                     break;
 
                 default:
-                    System.out.println(" Opção inválida.");
+                    System.out.println("⚠️ Opção inválida.");
                     break;
             }
         }

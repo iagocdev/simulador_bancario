@@ -17,6 +17,17 @@ public class ContaBancaria {
         this.extrato.add("Contra Criada com sucesso");
     }
 
+    public ContaBancaria(Pessoa titular, int numeroConta, BigDecimal saldo, ArrayList<String> extrato) {
+        this.titular = titular;
+        this.numeroConta = numeroConta;
+        this.saldo = saldo;
+        this.extrato = extrato;
+        this.extrato.add("Conta Carregada do BD");
+    }
+
+    public ContaBancaria(Pessoa titular, int numeroConta, BigDecimal saldo) {
+    }
+
     public void depositar(BigDecimal valor) {
         if (valor != null && valor.compareTo(BigDecimal.ZERO) > 0) {
             this.saldo = this.saldo.add(valor);
