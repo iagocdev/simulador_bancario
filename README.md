@@ -3,7 +3,7 @@
 Projeto acadêmico/pessoal desenvolvido em Java puro (Java SE) simulando um sistema de cadastros e operações bancárias do Banco Itaú.
 
 ##  Demonstração
-* *
+*![img.png](img.png) *
 
 ##  Como Executar
 
