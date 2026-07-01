@@ -1,130 +1,122 @@
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class SistemaBancario {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        ArrayList<ContaBancaria> contas = new ArrayList<>();
-        int opcao = 0;
-        int proximoNumeroConta = 1001;
 
-        System.out.println("Bem vindo ao Itaú Bank net (Simulador");
+        // Instanciando nosso gerenciador de dados
+        Banco bancoItau = new Banco();
 
-        while(opcao != 6){
-            System.out.println("\n==================================");
-            System.out.println(" 1 - Abrir Conta (Cadastrar Cliente)");
-            System.out.println(" 2 - Consultar Contas e Saldos");
-            System.out.println(" 3 - Depositar Dinheiro");
-            System.out.println(" 4 - Sacar Dinheiro");
-            System.out.println(" 5 - Fechar Conta (Excluir)");
-            System.out.println(" 6 - Sair");
-            System.out.println("\n==================================");
-            System.out.print("Escolha uma opção: ");
+        int opcaoPrincipal = 0;
 
-            opcao = scanner.nextInt();
+        System.out.println("🏦 Bem-vindo ao Itaú Bank net (SOLID & PIX API)");
+
+        // ==========================================
+        // MENU 1: TELA INICIAL (DESLOGADO)
+        // ==========================================
+        while (opcaoPrincipal != 3) {
+            System.out.println("\n--- TELA INICIAL ---");
+            System.out.println("1 - Abrir Nova Conta");
+            System.out.println("2 - Acessar Conta (Login)");
+            System.out.println("3 - Sair do Banco");
+            System.out.print("Escolha: ");
+
+            opcaoPrincipal = scanner.nextInt();
             scanner.nextLine();
 
-            switch (opcao) {
+            switch (opcaoPrincipal) {
                 case 1:
-                    System.out.println("Digite o nome do Cliente: ");
+                    System.out.print("Nome: ");
                     String nome = scanner.nextLine();
-
-                    System.out.println("Digite o CPF do Cliente: ");
+                    System.out.print("CPF (Será sua chave PIX 1): ");
                     String cpf = scanner.nextLine();
-
-                    System.out.println("Digite o telefone do Cliente: ");
-                    Long telefone = scanner.nextLong();
+                    System.out.print("Telefone (Será sua chave PIX 2 - Apenas números): ");
+                    long telefone = scanner.nextLong();
                     scanner.nextLine();
 
-                    //Obejtos com Composição
                     Pessoa titular = new Pessoa(nome, cpf, telefone);
-                    ContaBancaria novaConta = new ContaBancaria(titular,proximoNumeroConta);
-                    contas.add(novaConta);
-
-                    System.out.println("Conta nº "+proximoNumeroConta+"criada com sucesso!");
-                    proximoNumeroConta ++;
+                    ContaBancaria novaConta = bancoItau.abrirConta(titular);
+                    System.out.println("✅ Conta criada! Seu número é: " + novaConta.getNumeroConta());
                     break;
 
                 case 2:
-                    if (contas.isEmpty()){
-                        System.out.println("Nenhuma conta ativa no sistema.");
-                    }else {
-                        System.out.println("\n------LISTA DE CONTAS ITAÚ-------");
-                        for (int i = 0; i < contas.size(); i++) {
-                            ContaBancaria c = contas.get(i);
-                            System.out.println((i + 1) + ". Conta " + c.getNumeroConta() +
-                                    "|Titular: " + c.getTitular().getNome() +
-                                    "| Saldo: " + c.getSaldo());
-                        }
+                    if (bancoItau.isVazio()) {
+                        System.out.println("📭 Nenhuma conta registrada no banco.");
+                        break;
+                    }
+
+                    System.out.print("Digite o Número da Conta: ");
+                    int numConta = scanner.nextInt();
+                    scanner.nextLine();
+
+                    System.out.print("Digite seu CPF (Senha): ");
+                    String cpfLogin = scanner.nextLine();
+
+                    // O sistema tenta fazer o login
+                    ContaBancaria contaLogada = bancoItau.fazerLogin(numConta, cpfLogin);
+
+                    if (contaLogada != null) {
+                        System.out.println("\n🔓 Login realizado com sucesso! Olá, " + contaLogada.getTitular().getNome());
+                        menuLogado(scanner, bancoItau, contaLogada); // Chama o menu interno
+                    } else {
+                        System.out.println(" Credenciais inválidas.");
                     }
                     break;
+
                 case 3:
-                    if (contas.isEmpty()){
-                        System.out.println("Nenhuma conta ativa para receber depositos.");
-                    } else {
-                        System.out.println("Digite a conta para deposito.");
-                        int numConta = scanner.nextInt();
-                        System.out.println("Digite o valor: ");
-                        BigDecimal valorDeposito = scanner.nextBigDecimal();
-
-                        boolean encontrada = false;
-                        for (ContaBancaria c : contas) {
-                            if (c.getNumeroConta() == numConta) {
-                                c.depositar(valorDeposito);
-                                encontrada = true;
-                                break;
-                            }
-                        }
-                        if (!encontrada){
-                            System.out.println("Conta não encontrada.");
-                        }
-                    } break;
-                case 4:
-                    if (contas.isEmpty()){
-                        System.out.println("Nenhuma conta ativa para sacar.");
-                    }else {
-                        System.out.println("Digite a conta para sacar.");
-                        int numConta = scanner.nextInt();
-                        System.out.println("Digite o valor: ");
-                        BigDecimal valorSaque = scanner.nextBigDecimal();
-
-                        boolean encontrada = false;
-                        for (ContaBancaria c : contas) {
-                            if (c.getNumeroConta() == numConta) {
-                                c.sacar(valorSaque);
-                                encontrada = true;
-                                break;
-                            }
-                        }
-                        if (!encontrada)System.out.println("Conta nao encontrada.");
-                    }
-                    break;
-                case 5:
-                    if (contas.isEmpty()) {
-                        System.out.println("📭 Sem contas registradas para exclusão.");
-                    } else {
-                        System.out.print("Digite o índice (da lista) da conta a ser excluída: ");
-                        int indice = scanner.nextInt();
-
-                        if (indice > 0 && indice <= contas.size()) {
-                            ContaBancaria removida = contas.remove(indice - 1);
-                            System.out.println("🗑️ Conta Nº " + removida.getNumeroConta() + " de " + removida.getTitular().getNome() + " foi encerrada.");
-                        } else {
-                            System.out.println("⚠️ Índice inválido.");
-                        }
-                    }
-                    break;
-                case 6:
-                    System.out.println("Saindo do sistema do Banco Itaú... Até logo!");
+                    System.out.println("Desligando os servidores... Até logo!");
                     break;
 
                 default:
-                    System.out.println("⚠️ Opção inválida. Tente novamente.");
+                    System.out.println("⚠️ Opção inválida.");
                     break;
             }
         }
         scanner.close();
+    }
+
+    // ==========================================
+    // MENU 2: ÁREA PIX (LOGADO) - RESPONSABILIDADE  UI
+    // ==========================================
+    private static void menuLogado(Scanner scanner, Banco banco, ContaBancaria contaAtiva) {
+        int opcaoSecundaria = 0;
+
+        while (opcaoSecundaria != 4) {
+            System.out.println("\n--- SUA CONTA | Saldo: R$ " + contaAtiva.getSaldo() + " ---");
+            System.out.println("1 - Depositar");
+            System.out.println("2 - Sacar");
+            System.out.println("3 - Transferir (PIX)");
+            System.out.println("4 - Deslogar (Sair da Conta)");
+            System.out.print("Escolha: ");
+
+            opcaoSecundaria = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (opcaoSecundaria) {
+                case 1:
+                    System.out.print("Valor do Depósito: R$ ");
+                    contaAtiva.depositar(scanner.nextBigDecimal());
+                    break;
+
+                case 2:
+                    System.out.print("Valor do Saque: R$ ");
+                    contaAtiva.sacar(scanner.nextBigDecimal());
+                    break;
+
+                case 3:
+                    System.out.println(" IMPLEMENTAR O  PIX");
+                    // .
+                    break;
+
+                case 4:
+                    System.out.println("🔒 Deslogando... Voltando à tela inicial.");
+                    break;
+
+                default:
+                    System.out.println("⚠️ Opção inválida.");
+                    break;
             }
         }
-
+    }
+}
