@@ -25,7 +25,7 @@ public class SistemaBancario {
             System.out.println("\n--- TELA INICIAL ---");
             System.out.println("1 - Abrir Nova Conta");
             System.out.println("2 - Acessar Conta (Login)");
-            System.out.println("3 - Sair do repository.Banco");
+            System.out.println("3 - Sair do Banco");
             System.out.print("Escolha: ");
 
             opcaoPrincipal = scanner.nextInt();
@@ -43,7 +43,7 @@ public class SistemaBancario {
 
                     Pessoa titular = new Pessoa(nome, cpf, telefone);
                     ContaBancaria novaConta = bancoItau.abrirConta(titular);
-                    System.out.println("✅ Conta criada! Seu número é: " + novaConta.getNumeroConta());
+                    System.out.println(" Conta criada! Seu número é: " + novaConta.getNumeroConta());
                     break;
 
                 case 2:
