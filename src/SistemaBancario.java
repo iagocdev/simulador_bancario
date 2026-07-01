@@ -77,7 +77,7 @@ public class SistemaBancario {
     }
 
     // ==========================================
-    // MENU 2: ÁREA PIX (LOGADO) - RESPONSABILIDADE  UI
+    // MENU 2: ÁREA PIX (LOGADO)
     // ==========================================
     private static void menuLogado(Scanner scanner, Banco banco, ContaBancaria contaAtiva) {
         int opcaoSecundaria = 0;
@@ -87,7 +87,8 @@ public class SistemaBancario {
             System.out.println("1 - Depositar");
             System.out.println("2 - Sacar");
             System.out.println("3 - Transferir (PIX)");
-            System.out.println("4 - Deslogar (Sair da Conta)");
+            System.out.println("4 - Extrato");
+            System.out.println("5 - Deslogar (Sair da Conta)");
             System.out.print("Escolha: ");
 
             opcaoSecundaria = scanner.nextInt();
@@ -127,7 +128,7 @@ public class SistemaBancario {
                         contaDestino = banco.buscaContaPorTelefone(telefoneBusca);
                     } else if (tipoChave == 3) {
                         System.out.println("Digite o Numero Conta: ");
-                        int numeroContaBusca = scanner.nextInt();
+                        Long  numeroContaBusca = scanner.nextLong();
                         scanner.nextLine();
                         contaDestino = banco.buscaContaPorNumero(numeroContaBusca);
                     }else {
@@ -144,15 +145,14 @@ public class SistemaBancario {
                         System.out.print("Digite o valor do PIX: R$ ");
                         BigDecimal valorPix = scanner.nextBigDecimal();
 
-                        // A mágica da Orientação a Objetos acontece aqui:
+                       
                         contaAtiva.transferir(valorPix, contaDestino);
                     }
                     break;
-
-                    // .
-                    break;
-
                 case 4:
+                    contaAtiva.exibirExtrato();
+                    break;
+                case 5:
                     System.out.println(" Deslogando... Voltando à tela inicial.");
                     break;
 
