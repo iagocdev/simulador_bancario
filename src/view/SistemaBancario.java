@@ -1,3 +1,9 @@
+package view;
+
+import model.ContaBancaria;
+import model.Pessoa;
+import repository.Banco;
+
 import java.math.BigDecimal;
 import java.util.Scanner;
 
@@ -19,7 +25,7 @@ public class SistemaBancario {
             System.out.println("\n--- TELA INICIAL ---");
             System.out.println("1 - Abrir Nova Conta");
             System.out.println("2 - Acessar Conta (Login)");
-            System.out.println("3 - Sair do Banco");
+            System.out.println("3 - Sair do repository.Banco");
             System.out.print("Escolha: ");
 
             opcaoPrincipal = scanner.nextInt();
@@ -145,7 +151,7 @@ public class SistemaBancario {
                         System.out.print("Digite o valor do PIX: R$ ");
                         BigDecimal valorPix = scanner.nextBigDecimal();
 
-                       
+
                         contaAtiva.transferir(valorPix, contaDestino);
                     }
                     break;

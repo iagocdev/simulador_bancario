@@ -1,3 +1,8 @@
+package repository;
+
+import model.ContaBancaria;
+import model.Pessoa;
+
 import java.util.ArrayList;
 
 public class Banco {
